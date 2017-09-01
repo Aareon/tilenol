@@ -297,8 +297,16 @@ class Subprotocol(object):
                 items[field.attrib['name']] = self.get_type(
                     field.attrib['type'])
             elif field.tag == 'pad':
-                items[len(items)] = Simple(len(items),
-                    '{}x'.format(field.attrib['bytes']))
+                """
+                Recent xcb-proto added pad-align, which wasn't parsing
+                TODO: figure out if we care about the align, on the one had we should, on the other ignoring it
+                        must have worked at some point
+                """
+                try:
+                    items[len(items)] = Simple(len(items),
+                        '{}x'.format(field.attrib['bytes']))
+                except (KeyError):
+                    pass
             elif field.tag == 'list':
                 if field.find('*') is not None:
                     expr = self._parse_expr(field.find('*'))
